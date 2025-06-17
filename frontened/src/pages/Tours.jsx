@@ -17,7 +17,8 @@ const Tours = () => {
   useEffect(()=>{
     const pages= Math.ceil(tourCount / 8)   //later we will use backend data count
     setPageCount(pages);
-  },[page, tourCount]);
+    window.scrollTo(0,0)
+  },[page, tourCount,tours]);
   return(
   <>
 <CommonSection title={"All Tours"}/>

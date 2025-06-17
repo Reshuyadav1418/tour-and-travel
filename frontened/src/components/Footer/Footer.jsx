@@ -50,22 +50,22 @@ const Footer = () => {
               <div className="social__links d-flex align-items-center gap-4">
                 <span>
                   <Link to="#">
-                    <i class="ri-youtube-line"></i>
+                    <i className="ri-youtube-line"></i>
                   </Link>
                 </span>
                 <span>
                   <Link to="#">
-                    <i class="ri-github-fill"></i>
+                    <i className="ri-github-fill"></i>
                   </Link>
                 </span>
                 <span>
                   <Link to="#">
-                    <i class="ri-facebook-circle-line"></i>
+                    <i className="ri-facebook-circle-line"></i>
                   </Link>
                 </span>
                 <span>
                   <Link to="#">
-                    <i class="ri-instagram-line"></i>
+                    <i className="ri-instagram-line"></i>
                   </Link>
                 </span>
               </div>
@@ -111,14 +111,14 @@ const Footer = () => {
 
               <ListGroupItem className='ps-0 border-0 d-flex align-item-center gap-3'>
                <h6 className='mb-0 d-flex align-items-center gap-2'>
-                 <span><i class="ri-mail-line"></i></span>
+                 <span><i className="ri-mail-line"></i></span>
                  Email:
                </h6>
                <p className='mb-0'>teamabella@outlook.com</p>
               </ListGroupItem>
             <ListGroupItem className='ps-0 border-0 d-flex align-item-center gap-3'>
                <h6 className='mb-0 d-flex align-items-center gap-2'>
-                 <span><i class="ri-phone-line"></i></span>
+                 <span><i className="ri-phone-line"></i></span>
                  Mobile No.
                </h6>
                <p className='mb-0'>+639272632517</p>
