@@ -6,45 +6,47 @@ import '../styles/login.css'
 import registerImg from '../assets/images/register.png'
 import userIcon from '../assets/images/user.png'
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { BASE_URL } from '../utils/config';
 
-
 const Register = () => {
-
   const [credentials, setCredentials] = useState({
     username: undefined,
     email: undefined,
     password: undefined,
-});
-const {dispatch} = useContext(AuthContext)
-
-const navigate = useNavigate()
+  });
+  const { dispatch } = useContext(AuthContext);
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = e => {
-    setCredentials(prev => ({...prev, [e.target.id]: e.target.value}))
-};
+    setCredentials(prev => ({ ...prev, [e.target.id]: e.target.value }));
+  };
 
-const handleClick = async e => {
-  e.preventDefault();
-  try {
-    const res = await fetch(`${BASE_URL}/auth/register`,{
-      method: 'post',
-      headers:{
-        'content-type':'application/json'
-      },
-      body: JSON.stringify(credentials)
-    })
-    const result = await res.json();
-    if(!res.ok) alert(result.message);
+  const handleClick = async e => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        showToast(result.message || 'Registration failed', 'error', 'Registration Failed');
+        return;
+      }
 
-      dispatch({ type: `REGISTER_SUCCESS`});
+      dispatch({ type: `REGISTER_SUCCESS` });
+      showToast('Account created successfully! Please login.', 'success', 'Welcome Aboard!');
       navigate("/login");
-    
-  } catch (err) {
-    alert(err.message);
-    
-  }
-}
+
+    } catch (err) {
+      showToast(err.message || 'Something went wrong', 'error');
+    }
+  };
 
   return (
     <section>
@@ -73,7 +75,7 @@ const handleClick = async e => {
                     <input type="password" placeholder='Password' required id='password' onChange={handleChange}/>
                   </FormGroup>
 
-                  <Button className=' auth__btn' type='submit' onSubmit={handleClick}>Create Account</Button>
+                  <Button className=' auth__btn' type='submit'>Create Account</Button>
                 </Form>
                 <p>already have an account? <Link to='/login'>Login</Link></p>
               </div>

@@ -7,47 +7,50 @@ import '../styles/login.css'
 import loginImg from '../assets/images/login.png'
 import userIcon from '../assets/images/user.png'
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { BASE_URL } from '../utils/config';
 
 const Login = () => {
-
   const [credentials, setCredentials] = useState({
     email: undefined,
     password: undefined,
-});
-const {dispatch} = useContext(AuthContext)
-
-const navigate = useNavigate()
+  });
+  const { dispatch } = useContext(AuthContext);
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = e => {
-    setCredentials(prev => ({...prev, [e.target.id]: e.target.value}))
-};
+    setCredentials(prev => ({ ...prev, [e.target.id]: e.target.value }));
+  };
 
-const handleClick = async e => {
-  e.preventDefault();
-  dispatch({type: 'LOGIN_START'})
-  try{
-    const res = await fetch(`${BASE_URL}/auth/login`,{
-       method: 'post',
-      headers:{
-        'content-type':'application/json'
-    },
-    credentials: 'include',
-     body: JSON.stringify(credentials),
-  })
-  const result = await res.json()
-  if(!res.ok) alert(result.message);
-  console.log(result.data);
+  const handleClick = async e => {
+    e.preventDefault();
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        dispatch({ type: 'LOGIN_FAILURE', payload: result.message });
+        showToast(result.message || 'Login failed', 'error', 'Login Failed');
+        return;
+      }
 
-    dispatch({type: 'LOGIN_SUCCESS',payload: result.data})
-    navigate('/')
+      dispatch({ type: 'LOGIN_SUCCESS', payload: result.data });
+      showToast(`Welcome back, ${result.data?.username || 'User'}!`, 'success', 'Login Successful');
+      navigate('/');
 
-
-  }catch (err){
-    dispatch({type: 'LOGIN_FAILURE',payload: err.message})
-
-  }
-}
+    } catch (err) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: err.message });
+      showToast(err.message || 'Something went wrong', 'error', 'Error');
+    }
+  };
 
   return (
     <section>
@@ -73,7 +76,7 @@ const handleClick = async e => {
                     <input type="password" placeholder='Password' required id='password' onChange={handleChange}/>
                   </FormGroup>
 
-                  <Button className='auth__btn' type='submit' onSubmit={handleClick}>Login</Button>
+                  <Button className='auth__btn' type='submit'>Login</Button>
                 </Form>
                 <p>Don't have an account? <Link to='/register'>Create</Link></p>
               </div>

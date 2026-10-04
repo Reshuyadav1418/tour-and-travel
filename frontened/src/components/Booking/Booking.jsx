@@ -3,12 +3,14 @@ import './booking.css';
 import { useNavigate } from 'react-router-dom'
 import { Form, FormGroup, ListGroup, ListGroupItem, Button } from 'reactstrap'
 import { AuthContext } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { BASE_URL } from '../../utils/config';
 const Booking = ({ tour, avgRating}) => {
 
     const { price, reviews, title} = tour;
     const navigate = useNavigate();
     const {user} = useContext(AuthContext);
+    const { showToast } = useToast();
     const [booking, setBooking] = useState({
         userId: user && user._id,
         userEmail: user && user.email,
@@ -29,10 +31,9 @@ const Booking = ({ tour, avgRating}) => {
      // send data to the server
      const handleClick = async e => {
         e.preventDefault();
-        console.log(booking);
         try {
             if(!user || user===undefined || user===null){
-                return alert('Please sign in');
+                return showToast('Please sign in to book a tour', 'warning', 'Authentication Required');
             }
             const res = await fetch(`${BASE_URL}/booking`,{
                 method: 'post',
@@ -45,16 +46,13 @@ const Booking = ({ tour, avgRating}) => {
 
             const result = await res.json()
             if(!res.ok){
-                return  alert(result.message)
-
+                return showToast(result.message || 'Booking failed', 'error', 'Booking Error');
             }  
-              navigate('/thank-you');
+            showToast('Tour booked successfully!', 'success', 'Booking Confirmed');
+            navigate('/thank-you');
         } catch (error) {
-            alert(error.message);
+            showToast(error.message || 'Something went wrong', 'error');
         }
-      
-
-       
     };
 
 

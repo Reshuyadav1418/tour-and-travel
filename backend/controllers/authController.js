@@ -21,9 +21,17 @@ export const register = async (req, res) => {
       message: "Successfully Created",
     });
   } catch (error) {
+    console.error("Register Error:", error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0] || 'User';
+      return res.status(400).json({
+        success: false,
+        message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists. Please use a different one or Login.`
+      });
+    }
     res.status(500).json({
       success: false,
-      message: "Failed to create. Try again.",
+      message: error.message || "Failed to create account. Try again.",
     });
   }
 };
@@ -64,7 +72,7 @@ export const login = async(req, res) => {
         // set token in the browser cookies and send the response to the client 
         res.cookie('accessToken', token, {
             httpOnly: true,
-            expires: token.expiresIn
+            maxAge: 15 * 24 * 60 * 60 * 1000
         }).status(200).json({
             token,
             data:{ ...rest},
